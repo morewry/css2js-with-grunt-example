@@ -1,0 +1,361 @@
+@charset "utf-8";
+@import "core-sass-colors";
+
+/*
+# Strip Units (function)
+
+Strip units from a CSS length, leaving only a number.
+
+*/
+// ---------------------------------------
+
+@function strip-units ( $length ) {
+  @return $length / ($length * 0 + 1);
+} // strip-units
+
+/*
+    // Usage
+    strip-units(16px) -> #{strip-units(16px)}
+*/
+
+// ---------------------------------------
+
+/*
+# Convert Units (function)
+
+Convert a CSS length to its closest match in another unit. By default, outputs `rem`.
+
+*/
+// ---------------------------------------
+
+@function convert-units ( $length, $as: rem, $root: false, $ppi: 96 ) {
+  $result: $length;
+  $unit: unit($length); // measurement type e.x. rem, px
+  $value: strip-units($length); // length as pixels
+  $ratio: $value; // length as ratio
+  // $root: divisor for ratio
+  // $ppi: pixels per inch for pt
+
+  @if $root {
+    $root: strip-units($root);
+  }
+  @else {
+    @if global-variable-exists(font-size) {
+      $root: strip-units($font-size);
+    }
+    @else {
+      $root: 16;
+    }
+  }
+
+  // convert length in
+  @if $unit == "px" {
+    $ratio: $value / $root;
+    // $value: $value;
+    @if $value < 4 {
+      $as: px;
+    }
+  }
+  @else if $unit == "em"
+    or $unit == "rem"
+    or $unit == "" {
+    // $ratio: $ratio;
+    $value: $ratio * $root;
+  }
+  @else if $unit == "%" {
+    $ratio: $ratio / 10;
+    $value: $ratio * $root;
+  }
+  @else if $unit == "pt" {
+    $value: ($value * $ppi) / 72;
+    $ratio: $value / $root;
+  }
+
+  // convert length out
+  @if $as == "%" {
+    $result: percentage($ratio);
+  }
+  @else if $as == "/" {
+    $result: $ratio;
+  }
+  @else if $as == "px" {
+    $result: $value * 1px;
+  }
+  @else if $as == "em" {
+    $result: $ratio * 1em;
+  }
+  @else if $as == "rem" {
+    $result: $ratio * 1rem;
+  }
+  @else if $as == "pt" {
+    $result: ($value * 72) / $ppi;
+  }
+
+  @return $result;
+} // convert-units
+
+/*
+    // Usage
+    convert-units(14px) -> #{convert-units(14px)}
+    convert-units(26px, "/") -> #{convert-units(26px, "/")}
+*/
+
+// ---------------------------------------
+/*
+# Format Element (function)
+
+Format a string as a BEM element.
+
+*/
+// ---------------------------------------
+
+@function format-element( $str: "" ) {
+  $element: "";
+  @if type-of($str) == "string" and str-length($str) > 0 {
+    $element: "--#{$str}";
+  }
+  @return $element;
+} // format-element
+
+/*
+    // Usage
+    format-element( "element" ) -> #{format-element( "element" )}
+*/
+
+// ---------------------------------------
+/*
+# Format Modifier (function)
+
+Format a string as a BEM modifier.
+
+*/
+// ---------------------------------------
+
+@function format-modifier( $str: "" ) {
+  $modifier: "";
+  @if type-of($str) == "string" and str-length($str) > 0 {
+    $modifier: "__#{$str}";
+  }
+  @return $modifier;
+} // format-modifier
+
+/*
+    // Usage
+    format-modifier( "modifier" ) -> #{format-modifier( "modifier" )}
+*/
+
+// ---------------------------------------
+/*
+# Format Class (function)
+
+Format a string as a BEM class name.
+
+*/
+// ---------------------------------------
+
+@function format-class( $block: "", $element: "", $modifier: "" ) {
+  $class: "";
+  $element: format-element($element);
+  $modifier: format-modifier($modifier);
+  @if type-of($block) == "string" and str-length($block) > 0 {
+    $class: "#{$block}#{$element}#{$modifier}";
+  }
+  @return $class;
+} // format-class
+
+/*
+    // Usage
+    format-class( "block", "element", "modifier" ) -> #{format-class( "block", "element", "modifier" )}
+*/
+
+
+// ---------------------------------------
+/*
+# Remove (function)
+
+Remove a value from a list by value.
+
+Source: http://hugogiraudel.com/2013/08/08/advanced-sass-list-functions/
+
+*/
+// ---------------------------------------
+
+@function remove($list, $value, $recursive: false) {
+  $result: ();
+
+  @for $i from 1 through length($list) {
+    @if type-of(nth($list, $i)) == list and $recursive {
+      $result: append($result, remove(nth($list, $i), $value, $recursive));
+    }
+
+    @else if nth($list, $i) != $value {
+      $result: append($result, nth($list, $i));
+    }
+  }
+
+  @return $result;
+}
+
+// ---------------------------------------
+/*
+# Remove Nth (function)
+
+Remove a value from a list by index.
+
+Source: http://hugogiraudel.com/2013/08/08/advanced-sass-list-functions/
+
+*/
+// ---------------------------------------
+
+@function remove-nth($list, $index) {
+  $result: null;
+
+  @if type-of($index) != number {
+    @warn "$index: #{quote($index)} is not a number for `remove-nth`.";
+  }
+
+  @else if $index == 0 {
+    @warn "List index 0 must be a non-zero integer for `remove-nth`.";
+  }
+
+  @else if abs($index) > length($list) {
+    @warn "List index is #{$index} but list is only #{length($list)} item long for `remove-nth`.";
+  }
+
+  @else {
+    $result: ();
+    $index: if($index < 0, length($list) + $index + 1, $index);
+
+    @for $i from 1 through length($list) {
+      @if $i != $index {
+        $result: append($result, nth($list, $i));
+      }
+    }
+  }
+
+  @return $result;
+}
+
+
+// ---------------------------------------
+/*
+# Format Class (function)
+
+Format a string as a BEM class name.
+
+*/
+// ---------------------------------------
+
+// TODO: refactor
+
+// ---------------------------------------
+
+// https://gist.github.com/voxpelli/1069204
+
+@function get-max($v1, $v2) {
+  @return if($v1 > $v2, $v1, $v2);
+}
+@function get-min($v1, $v2) {
+  @return if($v1 < $v2, $v1, $v2);
+}
+
+@function hsv-to-hsl($h, $s: 0, $v: 0) {
+  @if type_of($h) == 'list' {
+    $v: nth($h, 3);
+    $s: nth($h, 2);
+    $h: nth($h, 1);
+  }
+
+  @if unit($h) == 'deg' {
+    $h: 3.1415 * 2 * ($h / 360deg);
+  }
+  @if unit($s) == '%' {
+    $s: 0 + ($s / 100%);
+  }
+  @if unit($v) == '%' {
+    $v: 0 + ($v / 100%);
+  }
+
+  $ss: $s * $v;
+  $ll: (2 - $s) * $v;
+
+  @if $ll <= 1 {
+    $ss: $ss / $ll;
+  } @else if ($ll == 2) {
+    $ss: 0;
+  } @else {
+    $ss: $ss / (2 - $ll);
+  }
+
+  $ll: $ll / 2;
+
+  @return 360deg * $h / (3.1415 * 2), percentage(get-max(0, get-min(1, $ss))), percentage(get-max(0, get-min(1, $ll)));
+}
+
+@function hsl-to-hsv($h, $ss: 0, $ll: 0) {
+  $value:();
+
+  @if type_of($h) == 'list' {
+    $ll: nth($h, 3);
+    $ss: nth($h, 2);
+    $h: nth($h, 1);
+  } @else if type_of($h) == 'color' {
+    $ll: lightness($h);
+    $ss: saturation($h);
+    $h: hue($h);
+  }
+
+  @if unit($h) == 'deg' {
+    $h: 3.1415 * 2 * ($h / 360deg);
+  }
+  @if unit($ss) == '%' {
+    $ss: 0 + ($ss / 100%);
+  }
+  @if unit($ll) == '%' {
+    $ll: 0 + ($ll / 100%);
+  }
+
+  $ll: $ll * 2;
+
+  @if $ll <= 1 {
+    $ss: $ss * $ll;
+  } @else {
+    $ss: $ss * (2 - $ll);
+  }
+
+  $v: ($ll + $ss) / 2;
+  $s: (2 * $ss) / ($ll + $ss);
+
+  @return 360deg * $h / (3.1415 * 2), percentage(get-max(0, get-min(1, $s))), percentage(get-max(0, get-min(1, $v)));
+}
+
+@function color-to-hsv($color) {
+  @return hsl-to-hsv($color);
+}
+
+@function hsv-to-color($h, $s: 0, $v: 0) {
+  $hsl: hsv-to-hsl($h, $s, $v);
+  @return hsl(nth($hsl, 1), nth($hsl, 2), nth($hsl, 3));
+}
+
+// ---------------------------------------
+
+// TODO: refactor
+@function adjust-hsb($color, $saturation:$saturation, $brightness:$brightness) {
+  $list:();
+  $values: color-to-hsv($color);
+  @for $i from 1 through length($values) {
+    $str: nth($values, $i);
+    @if($i == 2) {
+      $str: $str + $saturation;
+    }
+    @if($i == 3) {
+      $str: $str + $brightness;
+    }
+    $list: append($list, $str, comma);
+  }
+  $hsl: hsv-to-color($list);
+  @return $hsl;
+}
+
+// ---------------------------------------

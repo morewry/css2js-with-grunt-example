@@ -1,0 +1,114 @@
+@charset "utf-8";
+@import "core-sass-functions";
+@import "core-sass-mixins";
+
+// ---------------------------------------
+/*
+# Leading Offset (function)
+
+Calculate the white space above and below text.
+
+*/
+// ---------------------------------------
+
+@function leading-offset ( $font, $line, $as: px ) {
+  $result: 0;
+  @if variable-exists(font) {
+    $font: convert-units($font, px);
+  }
+  @else {
+    @if global-variable-exists(font-size) {
+      $font: $font-size;
+    }
+    @else {
+      $font: 16px;
+    }
+  }
+  @if variable-exists(line) {
+    $line: convert-units($line, px);
+  }
+  @else {
+    @if global-variable-exists(line-height) {
+      $line: $line-height;
+    }
+    @else {
+      $line: 24px;
+    }
+  }
+  @if variable-exists(font) and variable-exists(line) {
+    $result: convert-units(ceil(ceil($line - $font) / 2), $as, $font);
+  }
+  @return $result;
+} // get-color
+
+// ---------------------------------------
+
+@include exports(gui-typography) {
+
+  $-languages: (en es fr de jp) !global !default;
+
+  // possible future: cyrillic, arabic, hangeul, hanzi, etc
+  $font-family-latin: "source-sans-pro", sans-serif !global !default;
+
+  $font-family-kanji: "ヒラギノ角ゴ ProN W3", "Hiragino Kaku Gothic ProN", Roboto, "Droid Sans", "游ゴシック", YuGothic, "メイリオ", Meiryo, sans-serif !global !default;
+
+  $font-family: (
+    en: $font-family-latin,
+    es: $font-family-latin,
+    fr: $font-family-latin,
+    jp: $font-family-kanji,
+    de: $font-family-latin,
+  ) !global !default;
+
+  $font-size: 15px !global !default;
+
+  $line-height: 26px !global !default;
+
+  $bold: 600 !global !default;
+
+  $normal: 400 !global !default;
+
+  $leading-offset: leading-offset($font-size, $line-height) !global !default;
+
+  // ---------------------------------------
+
+  // TODO: needs review
+  .wf-loading * {
+    color: transparent !important;
+  }
+
+  // ---------------------------------------
+
+  :root {
+    -languages: map;
+    -font-family-latin: $font-family-latin;
+    -font-family-kanji: $font-family-kanji;
+    -font-family: map;
+    -font-size: $font-size;
+    -line-height: $line-height;
+    -bold: $bold;
+    -normal: $normal;
+    -leading-offset: $leading-offset;
+  }
+
+  // ---------------------------------------
+
+  html {
+    font-size: convert-units($font-size, em, 16);
+    line-height: convert-units($line-height, "/", strip-units($font-size));
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    @each $lang in $-languages {
+      &:lang(#{$lang}) {
+        font-family: map-get($font-family, $lang);
+      }
+    }
+  }
+
+  // ---------------------------------------
+
+} // exports
+
+// ---------------------------------------

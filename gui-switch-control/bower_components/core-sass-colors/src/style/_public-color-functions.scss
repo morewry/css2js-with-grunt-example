@@ -1,0 +1,51 @@
+@charset "utf-8";
+@import "private-color-functions";
+
+// -------------------------------------------------
+// Public color functions
+// -------------------------------------------------
+
+// -------------------------------------------------
+// Get Color (function)
+// Get a color variable by family and nickname.
+// Usage
+// get-color(blue, primary) -> #6CB6F5
+// get-color(octarine, unicorns) -> false
+// -------------------------------------------------
+
+@function get-color ( $set, $name ) {
+  $result: false;
+  @if colors-exist("get-color", $set, $name) {
+    $retrieved: map-get(get-colorset($set), $name);
+    @if type-of($retrieved) == "color" {
+      $result: $retrieved;
+    }
+    @else {
+      @warn "A color by this name doesn't exist: get-color($set: #{set}, $name: #{$name})";
+    }
+  }
+  @return $result;
+}
+
+// -------------------------------------------------
+// Add Color (function)
+// Add a color variable to family with nickname.
+// Usage
+// add-color(blue, primary, #F00) -> false
+// add-color(blue, newnickname, #6CB6F5) -> #6CB6F5
+// -------------------------------------------------
+
+@function add-color ( $set, $name, $color ) {
+  $result: false;
+  @if get-color($set, $name) {
+    @warn "Can't add this color because a color with this name already exists: add-color($set: #{set}, $name: #{$name}, $color: #{$color})";
+  }
+  @else {
+    $result: $color;
+    $temp: map-merge(get-colorset($set), (
+     $name: $color
+    ));
+    $colors: map-merge($colors, ($set: $temp)) !global;
+  }
+  @return $result;
+}

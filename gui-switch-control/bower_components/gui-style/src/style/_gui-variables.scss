@@ -1,0 +1,90 @@
+@charset "utf-8";
+@import "core-sass-functions";
+@import "core-sass-mixins";
+@import "core-sass-colors";
+
+@include exports(gui-variables) {
+
+  $-stylesheet-name: false !global !default;
+
+  $-screen-dimensions: (
+    xs: (
+      // min-width
+      max-width: convert-units(568px, em),
+    ),
+    sm: (
+      min-width: convert-units(569px, em),
+      max-width: convert-units(768px, em),
+    ),
+    md: (
+      min-width: convert-units(769px, em),
+      max-width: convert-units(1280px, em),
+    ),
+    lg: (
+      min-width: convert-units(1281px, em),
+      max-width: convert-units(1920px, em),
+    ),
+    xl: (
+      min-width: convert-units(1921px, em),
+      max-width: convert-units(2880px, em),
+    ),
+    xxl: (
+      min-width: convert-units(2881px, em),
+      // max-width
+    ),
+    phone: (
+      // min-width
+      max-width: convert-units(640px, em),
+    ),
+    tablet: (
+      min-width: convert-units(641px, em),
+      max-width: convert-units(1024px, em),
+    ),
+    desktop: (
+      min-width: convert-units(1025px, em),
+      max-width: convert-units(2880px, em),
+    ),
+    tv: (
+      min-width: convert-units(2881px, em),
+      // max-width
+    ),
+  ) !global !default;
+
+  // ---------------------------------------
+  /*
+    # Theme
+
+  */
+  // ---------------------------------------
+
+  $border-width: 1px !global !default;
+
+  $border-radius: 3px !global !default;
+
+  $transition-duration: 100ms !global !default;
+
+  // ---------------------------------------
+  /*
+    # Spacing
+
+  */
+  // ---------------------------------------
+
+  $gutter-size: 15px !global !default;
+
+  $touch-target-size: 50px !global !default;
+
+  // ---------------------------------------
+
+  :root {
+    -white: $white;
+    -black: $black;
+    -colors: map;
+    -border-width: $border-width;
+    -border-radius: $border-radius;
+    -transition-duration: $transition-duration;
+    -gutter-size: $gutter-size;
+    -touch-target-size: $touch-target-size;
+  }
+
+} // exports

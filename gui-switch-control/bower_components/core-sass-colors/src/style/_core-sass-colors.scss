@@ -1,0 +1,116 @@
+@charset "utf-8";
+@import "core-sass-mixins";
+@import "public-color-functions";
+
+@include exports(core-sass-colors) {
+
+  // -------------------------------------------------
+  // Colors
+  // -------------------------------------------------
+
+  $white: #FFF !global !default;
+  $black: #000 !global !default;
+
+  $colors: (
+
+    gray: (
+      background: #3A3C42, // not in swatch
+      body-background: #232426, // not in swatch
+      page-background: #F0F0F5, // not in swatch
+      text: #1E2022,
+      table-text: #313235, // not in swatch
+      table-titles: #98989A, // not in swatch
+      text-subtle: #929495, // not in swatch
+      header: #33353A,
+      header-shadow: #1C1D21,
+      table-header: #FAFAFA, // not in swatch
+      dropdown: #3C3F45, // not in swatch
+      head-background: #464950, // not in swatch
+      dropdown-hover: #303337, // not in swatch
+      dropdown-active: #24262A, // not in swatch
+      dropdown-disabled: #6B717C, // not in swatch
+      dropdown-text: #999, // not in swatch
+      empty-table: #767A84,
+      empty-chair: #5C6068,
+      floorplan: #484C53,
+      empty-table-number: #484C53,
+      panel: #EEEFF3,
+      status-icon: #A2A8B7,
+      divider-line: #EEE,
+      panel-border: #D6D9DE, // not in swatch
+      table-border: #D5D8DE, // not in swatch
+      outlined-button: #C7CBD4,
+      secondary-button: #969EB5,
+      disabled-button: #D7D9E0,
+      disabled-button-text: #B4B6BF,
+      gutter-off: #222428,
+      seat-button-shaded: #E2E3E8,
+      seat-button-highlight: #C7DFF3,
+      hint-text: #A2A8B7,
+      tag-text: #707581,
+      busy-light: #E6E7EB,
+      standard: #A0A8BD,
+      table-highlight: #F7F7F7, // not in swatch
+      table-stripe: #F9F9F9, // not specified
+      error-panel: #EBECEE,
+      button-hover: #F0F0F0, // not in swatch
+      foot-text: #B3B3B3, // not in swatch
+      nav-border: #DDD, // not in swatch
+      nav-focus: #3A3B42, // not in swatch
+      nav-press: #2E2F34, // not in swatch
+      list-press: #EAEAEA, // not in swatch
+      panel-background: #F0F1F4, // not in swatch
+      search-light: #ACB1BF, // not in swatch
+      search-lighter: #CED1D9, // not in swatch
+      search-lightest: #F0F1F5, // not in swatch
+      search-dark: #7B808C, // not in swatch
+      search-darker: #393B3C, // not in swatch
+      placeholder-text: #B5B6B8, // Light/Disabled Text (frontify)
+    ),
+
+    blue: (
+      primary: #6CB6F5,
+      seat-button-shaded: #E2E3E8,
+      seat-button-highlight: #C7DFF3,
+      link-text: #4F98DB,
+      highlight-accent: #4A82B7,
+      cancel-text: #5AA2E0
+    ),
+
+    orange: (
+      warning: #F49C1B,
+    ),
+
+    red: (
+      danger: #F55949,
+      error: #F44E40,
+    ),
+
+    green: (
+      confirm: #9ACC54,
+      course-1: #218DAF,
+      course-1-chairs: #355E6E,
+      course-2: #39AEC5,
+      course-2-chairs: #2C899C,
+      course-3: #54BABA,
+      course-3-chairs: #439191,
+      course-4: #84C5B8,
+      course-4-chairs: #57998B,
+      dropped-check: #54C077,
+      dropped-check-chairs: #44975E,
+      dropdown-tag: #41B98A, // not in swatch
+      go: #8EC44A,
+      paid: #8EC44A,
+      paid-chairs: #709E36,
+    ),
+
+    purple: (
+      partially-seated: #937FD6,
+      partially-seated-chairs: #7867AC,
+      seated: #A47ACE,
+      seated-chairs: #8362A3,
+    ),
+
+  ) !global !default;
+
+}

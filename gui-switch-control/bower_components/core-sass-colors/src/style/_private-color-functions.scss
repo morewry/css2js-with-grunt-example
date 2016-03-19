@@ -1,0 +1,35 @@
+@charset "utf-8";
+
+// -------------------------------------------------
+// Private/internal use only color functions
+// -------------------------------------------------
+
+// -------------------------------------------------
+// Check if global color var exists
+// -------------------------------------------------
+@function colors-exist ( $function, $set, $name, $color: "N/A" ) {
+  $result: false;
+  @if global-variable-exists(colors) and type-of($colors) == "map" {
+    $result: true;
+  }
+  @else {
+    @warn "Global color variable doesn't exist: #{$function}($set: #{set}, $name: #{$name}, $color: #{$color})";
+  }
+  @return $result;
+}
+
+// -------------------------------------------------
+// Get color set
+// -------------------------------------------------
+
+@function get-colorset ( $set ) {
+  $result: ();
+  $set: map-get($colors, $set);
+  @if type-of($set) == "map" {
+    $result: $set;
+  }
+  @else {
+    @warn "Set doesn't exist: #{set}";
+  }
+  @return $result;
+}

@@ -1,0 +1,47 @@
+@charset "utf-8";
+@import "core-form-element";
+@import "gui-style";
+
+@include exports(gui-switch-control) {
+
+	$label-space: $font-size - $leading-offset;
+
+	.gui-switch-control {
+		@extend %core-form-element--control__default-skin;
+		display: inline-flex;
+		border-width: convert-units($border-width);
+		cursor: pointer;
+		user-select: none;
+		&:hover {
+			color: get-color(gray, table-text);
+			background-color: get-color(gray, table-highlight);
+		}
+		&--control {
+			position: absolute;
+			opacity: 0;
+			z-index: -2;
+		}
+		&--label {
+			// TODO: has a bug when string is very long
+			display: inline-flex;
+			padding: 0 convert-units($label-space);
+			justify-content: center;
+			align-items: center;
+			text-align: center;
+			text-transform: uppercase;
+			&.gui-checked {
+				@extend %core-form-element--control__activated-skin;
+				// TODO: should this be non-interactable when gui-checked?
+				font-weight: $bold;
+			}
+			&__on {
+				@extend .gui-switch-control--label;
+				border-right: 0;
+			}
+			&__off {
+				@extend .gui-switch-control--label;
+				border-left: 0;
+			}
+		}
+	}
+}

@@ -1,0 +1,117 @@
+@charset "utf-8";
+@import "gui-style";
+@import "core-sass-colors";
+
+// TODO: maybe remove, test new stuff
+@mixin core-form-element--control__height {
+  height: convert-units($line-height + ($leading-offset * 2) + $border-width * 2);
+}
+
+@include exports(core-form-element) {
+
+  $border-color: add-color(gray, control-border, #B9B9B9);
+  $border-radius: 2px;
+
+  textarea {
+    resize: vertical;
+    &:disabled {
+      resize: none;
+    }
+  }
+
+  button, input, optgroup, select, textarea {
+    margin: 0;
+    color: inherit;
+    font-family: inherit;
+    -webkit-font-smoothing: inherit;
+    -moz-osx-font-smoothing: inherit;
+  }
+
+  button::-moz-focus-inner,
+  input::-moz-focus-inner {
+    border: 0;
+    padding: 0;
+  }
+
+  input,
+  select,
+  textarea {
+    &:focus,
+    &:valid,
+    &:invalid {
+      outline: 0;
+    }
+  }
+
+  ::placeholder {
+    font: inherit;
+    color: get-color(gray, placeholder-text);
+    -webkit-font-smoothing: inherit;
+    -moz-osx-font-smoothing: inherit;
+  }
+
+  %core-form-element {
+    & {
+      display: inline-block;
+    }
+    &__full-width {
+      display: block;
+      width: 100%;
+    }
+    &--control {
+      &:disabled {
+        pointer-events: none;
+        user-select: none;
+      }
+      &__full-width {
+        @extend %core-form-element__full-width;
+      }
+      & {
+        @extend %core-form-element--control__default-skin;
+        @extend %core-form-element--control__default-struct;
+        display: inline-block;
+        font-size: inherit;
+        line-height: inherit;
+      }
+      &__default-skin {
+        border-style: solid;
+        border-color: get-color(gray, control-border);
+        border-radius: convert-units($border-radius);
+        box-shadow: 0;
+        color: get-color(gray, text);
+        background-color: $white;
+        &:focus {
+          border-color: get-color(blue, primary);
+          box-shadow: inset 0 0 0 convert-units($border-width) get-color(blue, primary);
+          outline: 0;
+        }
+        &.gui-error {
+          border-color: get-color(red, error);
+          &:focus {
+            box-shadow: inset 0 0 0 convert-units($border-width) get-color(red, error);
+          }
+        }
+        &:disabled {
+          color: get-color(gray, foot-text);
+          background-color: get-color(gray, table-header);
+          border-color: get-color(gray, foot-text);
+        }
+      }
+      &__activated-skin {
+        color: $white;
+        border-color: get-color(blue, primary);
+        background-color: get-color(blue, primary);
+      }
+      &__default-struct {
+        $control-size: convert-units($line-height + ($leading-offset * 2) + $border-width * 2);
+        padding: convert-units($leading-offset) convert-units($gutter-size);
+        max-width: 100%;
+        min-width: $control-size;
+        height: $control-size;
+        border-width: convert-units($border-width);
+      }
+    } // &--control
+
+  }
+
+}

@@ -1,0 +1,214 @@
+@charset "utf-8";
+/*
+# Exports (mixin)
+
+For import once functionality, wrap Sass in the exports mixin
+
+  <!--
+  // Usage
+  @include exports( $name: example ) { ... }
+  -->
+
+*/
+// ---------------------------------------
+
+
+@mixin exports($name) {
+  @if not global-variable-exists(-modules) {
+    $-modules: () !global;
+  }
+  @if (not index($-modules, $name)) {
+    $-modules: append($-modules, $name) !global;
+    @content;
+  }
+}
+
+/*
+# Map as CSS (mixin)
+
+For a Sass map structure containing presumably valid CSS properties, output the map as CSS.  Keys starting with underscore will be ignored.
+
+  <!--
+  map-as-css( $map, $only: false, $except: false  )
+
+  // Usage
+  @include map-as-css( $mymap, $except: (margin) )
+  -->
+
+*/
+// ---------------------------------------
+
+@mixin map-as-css ( $map, $only: (), $except: () ) {
+  // $special - start key with _
+  // $p - map key, property name
+  // $v - map value, property value
+  @each $p, $v in $map {
+    // key should be output
+    @if type-of($p) != "null" and type-of($v) != "null" {
+      $special: (str-slice($p, 1, 1) == "_");
+      @if (not $special) and (not index($except, $p)) and (not length($only) or index($only, $p)) {
+        // key is currently a property
+        @if type-of($v) != map {
+          // output as a property
+          #{$p}: #{$v};
+        }
+        // key's value is a map
+        @else {
+          // output as a pseudo-class or pseudo-element
+          &:#{$p} {
+            @include map-as-css($v);
+          }
+        } // specific nested set
+      } // not suppressed
+    } // null check
+  } // each
+} // map-as-css
+
+// ---------------------------------------
+
+/*
+# Output To (mixin)
+
+For one or more stylesheet nicknames, output CSS properties.
+
+  <!--
+  output-to( $sheets... )
+
+  // Usage
+  @include output-to( phone, tablet, desktop )
+  -->
+
+*/
+// ---------------------------------------
+
+@mixin output-to ( $sheets... ) {
+  @if variable-exists(-stylesheet-name) {
+    @if index($sheets, $-stylesheet-name) {
+      @content;
+    }
+  }
+  @else {
+    @warn "no global $-stylesheet-name set for the output-to mixin";
+  }
+} // output-to
+
+// ---------------------------------------
+
+/*
+# Respond To (mixin)
+
+For one or more screen size nicknames, output CSS properties in a media query.
+
+  <!--
+  respond-to( $screens... )
+
+  // Usage
+  @include respond-to( sm, md, lg )
+  -->
+
+
+*/
+// ---------------------------------------
+
+@mixin respond-to ( $screens... ) {
+  $query: "";
+  $i: 0;
+  $ii: 0;
+  $ranges: $-screen-dimensions;
+  @each $size in $screens {
+    // /* debug: respond-to size #{$size} */
+    @if length(map-get($ranges, $size)) {
+      $i: $i + 1;
+      @if $i > 1 { $query: "#{$query},"; }
+      @each $feature in map-get($ranges, $size) {
+        @if length($feature) == 2 {
+          $ii: $ii + 1;
+          @if $ii > 1 { $query: "#{$query} and"; }
+          $query: "#{$query} (#{nth($feature, 1)}: #{nth($feature, 2)})";
+        } // if
+      } // each
+      $ii: 0;
+    } // if
+  } // each
+  @if $i > 0 {
+    @media #{str-slice($query, 2)} { @content }
+  }
+  @else {
+    @warn "no global $-screen-dimensios set for the respond-to mixin";
+  } // if
+} // respond-to
+
+// ---------------------------------------
+
+// can't until https://github.com/sass/sass/issues/871
+@mixin languages( $languages... ) {
+  @if not variable-exists(languages) {
+    @if not variable-exists(-languages) {
+      @warn "no $languages given and no global $-languages set for the languages mixin";
+    }
+    @else {
+      $languages: $-languages;
+    }
+  }
+  @each $lang in $languages {
+    &:lang(#{$lang}) {
+      @content;
+    }
+  }
+}
+
+// ---------------------------------------
+
+/*
+# Media-*x (mixin)
+
+For generating the long media queries for 1 vs 2 dpr.
+
+  <!--
+  // Usage
+  @include media-1x() { ... }
+  -->
+
+*/
+
+// only until https://github.com/postcss/autoprefixer/issues/122
+@mixin media-1x () {
+  @media ( -webkit-max-device-pixel-ratio: 1.2), ( max__moz-device-pixel-ratio: 1.2), ( -o-max-device-pixel-ratio: 6/5), ( max-device-pixel-ratio: 1.2), ( max-resolution: 115dpi), ( max-resolution: 1.2dppx) {
+    @content;
+  }
+}
+
+@mixin media-2x () {
+  @media ( -webkit-min-device-pixel-ratio: 1.3), ( min__moz-device-pixel-ratio: 1.3), ( -o-min-device-pixel-ratio: 13/10), ( min-device-pixel-ratio: 1.3), ( min-resolution: 116dpi), ( min-resolution: 1.3dppx) {
+    @content;
+  }
+}
+
+// ---------------------------------------
+
+/*
+# Absolute Center
+
+For centering with position absolute and negative margins.
+
+  <!--
+  // Usage
+  @include absolute-center($width: 100px, $height: 100px) { ... }
+  -->
+
+*/
+
+// only until https://github.com/postcss/autoprefixer/issues/122
+@mixin absolute-center ( $width: 0, $height: 0 ) {
+  position: absolute;
+  @if $height > 0 {
+    top: 50%;
+    margin-top: convert-units($height / 2 * -1)
+  }
+  @if $width > 0 {
+    left: 50%;
+    margin-left: convert-units($width / 2 * -1);
+  }
+}
+
+// ---------------------------------------
